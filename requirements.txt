@@ -1,0 +1,5 @@
+pbr>=1.10.0
+setuptools>=20.10.1
+aiohttp>=1.0.5
+aiomysql>=0.0.9
+jinja2>=2.8
