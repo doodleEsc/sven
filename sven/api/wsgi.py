@@ -20,5 +20,5 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, loop):
+        super()
