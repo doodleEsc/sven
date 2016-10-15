@@ -10,5 +10,15 @@ class Server(object):
     manage service
     """
 
-    def __init__(self, loop):
+    def __init__(self):
+        pass
+
+
+class Application(web.Application):
+    """wsgi application
+    
+    wsgi application class.
+    """
+
+    def __init__(self):
         pass
