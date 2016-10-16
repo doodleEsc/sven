@@ -31,3 +31,11 @@ class Router(web_urldispatcher.UrlDispatcher):
     """
     def __init__(self):
         pass
+
+
+class RequestHandler(object):
+    """get params from request
+    """
+
+    def __init__(self):
+        pass
