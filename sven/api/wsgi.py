@@ -7,10 +7,8 @@ from aiohttp import web_urldispatcher
 
 class Server(object):
     """Server class that handle service
-
     manage service
     """
-
     def __init__(self, app):
         self._app = app
 
@@ -30,6 +28,9 @@ class Router(web_urldispatcher.UrlDispatcher):
     read from config file to load handler
     """
     def __init__(self):
+        pass
+
+    def add_routes(self):
         pass
 
 
