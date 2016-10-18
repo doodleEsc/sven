@@ -1,4 +1,5 @@
 import os
+import inspect
 import asyncio
 
 from aiohttp import web
@@ -38,5 +39,19 @@ class RequestHandler(object):
     """get params from request
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, func):
+        self._func = func
+        self.has_params = self.has_params(func)
+
+    def has_params(self, func):
+        parameters = inspect.signature(func).parameters
+        return True if len(parameters.items()) > 0 else False
+
+    async def __call__(self, request):
+        kw = None
+        if self.has_params:
+            pass
+        else:
+            pass
+
+        return await self._func(**kw)
