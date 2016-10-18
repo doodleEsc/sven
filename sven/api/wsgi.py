@@ -35,17 +35,18 @@ class Router(web_urldispatcher.UrlDispatcher):
         pass
 
 
+def has_params(func):
+    parameters = inspect.signature(func).parameters
+    return True if len(parameters.items()) > 0 else False
+
+
 class RequestHandler(object):
     """get params from request
     """
 
     def __init__(self, func):
         self._func = func
-        self.has_params = self.has_params(func)
-
-    def has_params(self, func):
-        parameters = inspect.signature(func).parameters
-        return True if len(parameters.items()) > 0 else False
+        self.has_params = has_params(func)
 
     async def __call__(self, request):
         kw = None
