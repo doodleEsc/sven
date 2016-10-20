@@ -1,12 +1,15 @@
-import os
 import inspect
-import asyncio
+import functools
 
 from urllib import parse
 from json.decoder import JSONDecodeError
 
 from aiohttp import web
-from aiohttp import web_urldispatcher
+
+
+def has_request(func):
+    parameters = inspect.signature(func).parameters
+    return True if "request" in parameters.keys() else False
 
 
 class Server(object):
@@ -25,29 +28,59 @@ class Application(web.Application):
 
     wsgi application class.
     """
-    def __init__(self, loop):
+    def __init__(self, loop=None):
         super().__init__(loop=loop)
 
+    def get(self, path):
+        """
+        define app.get('/path')
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            self.router.add_route('GET', path, RequestHandler(wrapper))
+            return wrapper
+        return decorator
 
-class Router(web_urldispatcher.UrlDispatcher):
-    """router class that handle route info
-    read from config file to load handler
-    """
-    # def __init__(self):
-    #     pass
+    def post(self, path):
+        """
+        define app.post('/path')
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            self.router.add_route('POST', path, RequestHandler(wrapper))
+            return wrapper
+        return decorator
 
-    def add_routes(self):
-        pass
+    def put(self, path):
+        """
+        define app.post('/path')
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            self.router.add_route('PUT', path, RequestHandler(wrapper))
+            return wrapper
+        return decorator
 
+    def delete(self, path):
+        """
+        define app.post('/path')
+        """
+        def decorator(func):
+            @functools.wraps(func)
+            def wrapper(*args, **kwargs):
+                return func(*args, **kwargs)
+            self.router.add_route('DELETE', path, RequestHandler(wrapper))
+            return wrapper
+        return decorator
 
-# def has_params(func):
-#     parameters = inspect.signature(func).parameters
-#     return True if len(parameters.items()) > 0 else False
-
-
-def has_request(func):
-    parameters = inspect.signature(func).parameters
-    return True if "request" in parameters.keys() else False
+    def copy(self):
+        raise NotImplemented
 
 
 class RequestHandler(object):
@@ -72,14 +105,22 @@ class RequestHandler(object):
         try:
             params = await request.json()
             if not isinstance(params, dict):
-                return web.HTTPBadRequest(text="INVALID JSON OBJECT")
+                return Response(text="INVALID JSON OBJECT")
             kw.update(params)
         except JSONDecodeError:
             if request.method == 'POST' or request.method == 'PUT':
-                return web.HTTPBadRequest(text='NO JSON OBJECT FOUND')
+                return Response(text='NO JSON OBJECT FOUND')
 
         # get 'request' parameters
         if self.has_request:
             kw['request'] = request
 
         return await self._func(**kw)
+
+
+class Response(web.Response):
+
+    def __init__(self, status=200, headers=None,
+                 content_type=None, charset=None, body=None, text=None):
+        super().__init__(status, headers,
+                         content_type, charset, body, text)
