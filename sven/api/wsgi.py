@@ -121,6 +121,8 @@ class RequestHandler(object):
 class Response(web.Response):
 
     def __init__(self, status=200, headers=None,
-                 content_type=None, charset=None, body=None, text=None):
-        super().__init__(status, headers,
-                         content_type, charset, body, text)
+                 content_type=None, charset=None,
+                 body=None, text=None):
+        super().__init__(status=status, headers=headers,
+                         content_type=content_type, charset=charset,
+                         body=body, text=text)
