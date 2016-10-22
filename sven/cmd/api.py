@@ -13,7 +13,10 @@ async def get_func_1(id):
 
 @app.get('/get')
 async def get_func_2():
-    return Response(text="get func without parameters")
+    return {
+        "template": "index.html",
+        "name": "cookie"
+    }
 
 
 @app.post('/post/{id}')

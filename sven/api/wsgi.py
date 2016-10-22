@@ -1,5 +1,6 @@
 import inspect
 import functools
+import json
 from urllib import parse
 from json.decoder import JSONDecodeError
 
@@ -130,6 +131,9 @@ class Application(web.Application):
     def copy(self):
         raise NotImplemented
 
+    def render_template(self, template, body):
+        return self.template_engine.get_template(template).render(**body)
+
 
 class RequestHandler(object):
     """get params from request
@@ -176,6 +180,17 @@ class Response(web.Response):
 
 async def response_factory(app, handler):
     async def response(request):
-        resp = await handler(request)
-        return resp
+        r = await handler(request)
+        if isinstance(r, dict):
+            template = r.get('template', None)
+            if template is None:
+                resp = Response(body=json.dumps(r,ensure_ascii=False).encode('utf-8'))
+                resp.content_type = 'application/json;charset=utf-8'
+                return resp
+            else:
+                body = app.render_template(template, r).encode('utf-8')
+                resp = Response(body=body)
+                resp.content_type = 'text/html;charset=utf-8'
+                return resp
+
     return response
