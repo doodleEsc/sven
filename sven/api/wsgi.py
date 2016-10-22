@@ -1,6 +1,5 @@
 import inspect
 import functools
-
 from urllib import parse
 from json.decoder import JSONDecodeError
 
@@ -57,7 +56,7 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self, loop=None):
+    def __init__(self, loop=None, middleware=None):
         self.template_engine = init_template_engine(config['templates_path'])
         super().__init__(loop=loop)
 
@@ -171,3 +170,9 @@ class Response(web.Response):
         super().__init__(status=status, headers=headers,
                          content_type=content_type, charset=charset,
                          body=body, text=text)
+
+async def response_factory(app, handler):
+    async def response(request):
+        resp = await handler(request)
+        return resp
+    return response
