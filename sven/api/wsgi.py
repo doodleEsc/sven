@@ -56,9 +56,12 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self, loop=None, middleware=None):
+    def __init__(self, loop=None, middlewares=None):
         self.template_engine = init_template_engine(config['templates_path'])
-        super().__init__(loop=loop)
+        if not isinstance(middlewares, list) or middlewares is None:
+            middlewares = []
+        middlewares.append(response_factory)
+        super().__init__(loop=loop, middlewares=middlewares)
 
     def get(self, path):
         """

@@ -1,8 +1,9 @@
 from sven.api import wsgi
 from sven.api.wsgi import Response
+from sven.api.middleware import auth_factory
 
-
-app = wsgi.Application()
+middlewares = [auth_factory]
+app = wsgi.Application(middlewares=middlewares)
 
 
 @app.get('/get/{id}')
