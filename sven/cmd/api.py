@@ -1,8 +1,13 @@
 from sven.api.wsgi import Server, Application
 from sven.api.middleware import auth_factory
 
+
 middlewares = [auth_factory]
 app = Application(middlewares=middlewares)
+app.add_handlers([
+    "sven.api.handler.index",
+
+    ])
 
 
 if __name__ == '__main__':

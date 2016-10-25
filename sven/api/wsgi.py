@@ -136,9 +136,26 @@ class Application(web.Application):
 
     def add_handlers(self, modules):
         if not isinstance(modules, list):
+            # Here should raise an exception
             return
-        for module in modules:
-            pass
+        for module_str in modules:
+            index = module_str.rfind('.')
+            if index == -1:
+                module = __import__(module_str, globals(), locals())
+            else:
+                name = module_str[index+1:]
+                module = getattr(__import__(module_str[:index], globals(), locals(), [name]), name)
+
+                # get wsgi handler function
+                for attr in dir(module):
+                    if attr.startswith('_'):
+                        continue
+                    func = getattr(module, attr)
+                    if callable(func):
+                        method = getattr(func, '__method__', None)
+                        route = getattr(func, '__route__', None)
+                        if method and route:
+                            self.router.add_route(method, route, RequestHandler(func))
 
 
 class RequestHandler(object):
