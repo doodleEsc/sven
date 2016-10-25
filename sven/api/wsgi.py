@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader
 # test code for config
 
 config = dict(
-    templates_path='E:/Python_Project/templates'
+    templates_path='E:/Python_Project/sven/sven/templates'
 )
 
 
@@ -63,70 +63,6 @@ class Application(web.Application):
             middlewares = []
         middlewares.append(response_factory)
         super().__init__(loop=loop, middlewares=middlewares)
-
-    # def get(self, path):
-    #     """
-    #     define app.get('/path')
-    #     :param path: restful url
-    #     """
-    #
-    #     def decorator(func):
-    #         @functools.wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #
-    #         self.router.add_route('GET', path, RequestHandler(wrapper))
-    #         return wrapper
-    #
-    #     return decorator
-    #
-    # def post(self, path):
-    #     """
-    #     define app.post('/path')
-    #     :param path: restful url
-    #     """
-    #
-    #     def decorator(func):
-    #         @functools.wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #
-    #         self.router.add_route('POST', path, RequestHandler(wrapper))
-    #         return wrapper
-    #
-    #     return decorator
-    #
-    # def put(self, path):
-    #     """
-    #     define app.post('/path')
-    #     :param path: restful url
-    #     """
-    #
-    #     def decorator(func):
-    #         @functools.wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #
-    #         self.router.add_route('PUT', path, RequestHandler(wrapper))
-    #         return wrapper
-    #
-    #     return decorator
-    #
-    # def delete(self, path):
-    #     """
-    #     define app.post('/path')
-    #     :param path: restful url
-    #     """
-    #
-    #     def decorator(func):
-    #         @functools.wraps(func)
-    #         def wrapper(*args, **kwargs):
-    #             return func(*args, **kwargs)
-    #
-    #         self.router.add_route('DELETE', path, RequestHandler(wrapper))
-    #         return wrapper
-    #
-    #     return decorator
 
     def copy(self):
         raise NotImplemented
