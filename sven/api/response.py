@@ -65,10 +65,10 @@ __all__ = (
 class Response(web.Response):
     def __init__(self, status=200, headers=None,
                  content_type=None, charset=None,
-                 body=None, text=None):
+                 body=None, text=None, reason=None):
         super().__init__(status=status, headers=headers,
                          content_type=content_type, charset=charset,
-                         body=body, text=text)
+                         body=body, text=text, reason=None)
 
 
 async def response_factory(app, handler):
