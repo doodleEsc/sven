@@ -142,4 +142,7 @@ async def response_factory(app, handler):
                 resp.content_type = 'text/html;charset=utf-8'
                 return resp
 
+        elif isinstance(r, web.StreamResponse):
+            return r
+
     return response

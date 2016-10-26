@@ -7,5 +7,3 @@ async def index():
         "template": "index.html",
         "name": "cookie"
     }
-
-
