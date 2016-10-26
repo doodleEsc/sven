@@ -1,5 +1,4 @@
 from sven.api.decorator import get
-from sven.api.response import HTTPBadRequest
 
 
 @get('/')
@@ -10,6 +9,3 @@ async def index():
     }
 
 
-@get('/bad')
-async def bad():
-    return HTTPBadRequest(text='bad request')
