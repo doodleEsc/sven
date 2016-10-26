@@ -8,12 +8,6 @@ from jinja2 import Environment, FileSystemLoader
 
 from sven.utils import importutil
 
-# test code for config
-
-config = dict(
-    templates_path='E:/Python_Project/sven/sven/templates'
-)
-
 
 def has_request(func):
     parameters = inspect.signature(func).parameters
@@ -58,12 +52,13 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self, loop=None, middlewares=None):
-        self.template_engine = init_template_engine(config['templates_path'])
+    def __init__(self, config, loop=None, middlewares=None):
+        self.template_engine = init_template_engine(config.template_path)
         if not isinstance(middlewares, list) or middlewares is None:
-            middlewares = []
+            middlewares = config.middlewares
         middlewares.append(response_factory)
         super().__init__(loop=loop, middlewares=middlewares)
+        self.add_handlers(config.handlers)
 
     def copy(self):
         raise NotImplemented

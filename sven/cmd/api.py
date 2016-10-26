@@ -1,14 +1,13 @@
 from sven.api.wsgi import Server, Application
-from sven.api.middleware import auth_factory
+from sven.utils.config import Config
 
 
-middlewares = [auth_factory]
-app = Application(middlewares=middlewares)
-app.add_handlers([
-    "sven.api.handler.index"
-    ])
+def main():
+    config = Config('E:/Python_Project/sven/sven/sven.conf')
+    app = Application(config)
+    server = Server(app)
+    server.run('0.0.0.0', 8000)
 
 
 if __name__ == '__main__':
-    server = Server(app)
-    server.run('0.0.0.0', 8000)
+    main()

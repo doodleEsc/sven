@@ -37,6 +37,8 @@ class Config(object):
     def _get_middlewares(self):
         ms = self.cp.get('middlewares', 'middlewares')
         middlewares = ms.split(',')
+        if len(middlewares) == 1 and middlewares[0] == '':
+            middlewares = []
         for middleware in middlewares:
             func = importutil.import_function(middleware)
             self.middlewares.append(func)
@@ -44,6 +46,8 @@ class Config(object):
     def _get_handlers(self):
         hs = self.cp.get('handlers', 'handlers')
         handlers = hs.split(',')
+        if len(handlers) == 1 and handlers[0] == '':
+            handlers = []
         self.handlers = handlers
 
     def _get_template_path(self):
@@ -54,12 +58,4 @@ class Config(object):
         static_path = self.cp.get('static', 'static_path')
         self.static_path = static_path
 
-
-
-
-if __name__ == '__main__':
-    x = Config('E:/Python_Project/sven/sven/sven.conf')
-    b = Config('E:/Python_Project/sven/sven/sven.conf')
-    print(x)
-    print(b)
 
