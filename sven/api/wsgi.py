@@ -7,6 +7,9 @@ from jinja2 import Environment, FileSystemLoader
 
 from sven.api.response import Response, response_factory
 from sven.utils import importutil
+from sven.utils.log import Log
+
+logger = Log()
 
 
 def has_request(func):
@@ -26,6 +29,7 @@ def init_template_engine(templates_path, filters=None,
         variable_end_string=variable_end_string,
         auto_reload=auto_reload
     )
+    logger.info('add template %s' % templates_path)
     env = Environment(loader=FileSystemLoader(templates_path), **options)
     if filters is not None and isinstance(filters, dict):
         for name, func in filters.items():
@@ -43,6 +47,7 @@ class Server(object):
         self._app = app
 
     def run(self, host, port):
+        logger.info('server start at %s:%s' % (host, port))
         web.run_app(self._app, host=host, port=port)
 
 
@@ -120,32 +125,3 @@ class RequestHandler(object):
             kw['request'] = request
 
         return await self._func(**kw)
-
-
-# class Response(web.Response):
-#     def __init__(self, status=200, headers=None,
-#                  content_type=None, charset=None,
-#                  body=None, text=None):
-#         super().__init__(status=status, headers=headers,
-#                          content_type=content_type, charset=charset,
-#                          body=body, text=text)
-#
-# async def response_factory(app, handler):
-#     async def response(request):
-#         r = await handler(request)
-#         if isinstance(r, dict):
-#             template = r.get('template', None)
-#             if template is None:
-#                 resp = Response(body=json.dumps(r,ensure_ascii=False).encode('utf-8'))
-#                 resp.content_type = 'application/json;charset=utf-8'
-#                 return resp
-#             else:
-#                 body = app.render_template(template, r).encode('utf-8')
-#                 resp = Response(body=body)
-#                 resp.content_type = 'text/html;charset=utf-8'
-#                 return resp
-#
-#         elif isinstance(r, web.StreamResponse):
-#             return r
-#
-#     return response
