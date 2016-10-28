@@ -37,10 +37,17 @@ class Log(object):
         fmt_str = '%(asctime)s %(filename)s:%(lineno)s %(levelname)-8s [-] %(message)s'
         fmt = logging.Formatter(fmt_str)
 
+        normal_filter = NormalFilter()
+        error_filter = ErrorFilter()
+
         error_handler.setFormatter(fmt)
         normal_handler.setFormatter(fmt)
 
+        error_handler.addFilter(error_filter)
+        normal_handler.addFilter(normal_filter)
+
         self.logger = logging.getLogger('sven')
+        self.logger.setLevel(logging.DEBUG)
         self.logger.addHandler(normal_handler)
         self.logger.addHandler(error_handler)
 
@@ -60,4 +67,11 @@ class Log(object):
         self.logger.debug(msg)
 
 
-logger = Log()
+class NormalFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno in (logging.DEBUG, logging.INFO, logging.WARNING)
+
+
+class ErrorFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno in (logging.ERROR, logging.CRITICAL)
