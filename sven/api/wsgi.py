@@ -54,10 +54,13 @@ class Application(web.Application):
 
     def __init__(self, config, loop=None, middlewares=None):
         self.template_engine = init_template_engine(config.template_path)
+
         if not isinstance(middlewares, list) or middlewares is None:
             middlewares = config.middlewares
         middlewares.append(response_factory)
+
         super().__init__(loop=loop, middlewares=middlewares)
+
         self.add_handlers(config.handlers)
 
     def copy(self):

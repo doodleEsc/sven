@@ -20,6 +20,7 @@ class Config(object):
         self.handlers = None
         self.template_path = None
         self.static_path = None
+        self.log_path = None
         self.init_config()
 
     def init_config(self):
@@ -28,6 +29,7 @@ class Config(object):
         self._get_handlers()
         self._get_template_path()
         self._get_static_path()
+        self._get_log_path()
 
     def _get_database(self):
         items = self.cp.items('database')
@@ -57,5 +59,9 @@ class Config(object):
     def _get_static_path(self):
         static_path = self.cp.get('static', 'static_path')
         self.static_path = static_path
+
+    def _get_log_path(self):
+        log_path = self.cp.get('log', 'log_path')
+        self.log_path = log_path
 
 
