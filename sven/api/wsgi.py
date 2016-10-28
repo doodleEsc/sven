@@ -77,7 +77,7 @@ class Application(web.Application):
     def add_handlers(self, modules):
         if not isinstance(modules, list):
             # Here should raise an exception
-            return
+            raise FileNotFoundError()
         for module_str in modules:
             module = importutil.import_module(module_str)
             # get wsgi handler function
