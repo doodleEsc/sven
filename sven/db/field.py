@@ -56,3 +56,12 @@ class TextField(Field):
     def __init__(self, name=None, default=None):
         super().__init__(name, 'text', False, default)
 
+
+class DateTimeField(Field):
+    """
+    DateTime field
+    """
+
+    def __init__(self, name=None, default=None):
+        super().__init__(name, 'datetime', False, default)
+
