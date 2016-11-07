@@ -3,6 +3,8 @@ database utils
 """
 import aiomysql
 
+__pool = None
+
 
 async def create_pool(loop, **kwargs):
     global __pool
