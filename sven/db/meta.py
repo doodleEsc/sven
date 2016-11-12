@@ -4,6 +4,7 @@ metaclass for model
 
 from .field import Field
 
+
 class ModelMetaClass(type):
     """
     model metaclass
@@ -37,7 +38,17 @@ class ModelMetaClass(type):
         for k in mapping.keys():
             attrs.pop(k)
 
+        escaped_fields = list(map(lambda x: '`%s`' %x, fields))
+
         attrs['__mapping__'] = mapping
         attrs['__table__'] = table_name
         attrs['__primary_key__'] = primary_key
         attrs['__fields__'] = fields
+        attrs['__select__'] = 'SELECT `%s`,%s FROM `%s`'\
+                              %(primary_key, ', '.join(escaped_fields), table_name)
+
+        attrs['__insert__'] = 'INSERT INTO `%s` (`%s`, %s) VALUES (%s)' \
+                              %(table_name, primary_key, ', '.join(escaped_fields), \
+                                ', '.join(['?' for n in range(len(escaped_fields)+1)]))
+
+        attrs['__update__'] = 'UPDATE `%s` SET %s WHERE '
