@@ -3,7 +3,7 @@ model
 """
 
 from sven.db.meta import ModelMetaClass
-from sven.db.utils import select, excute
+from sven.db.utils import select, execute
 
 
 class Model(dict, metaclass=ModelMetaClass):
@@ -73,7 +73,9 @@ class Model(dict, metaclass=ModelMetaClass):
         rs = await select(' '.join(sql).replace('?', '%s'), args, 1)
         if len(rs) == 0:
             return None
-        return rs[0]['_num_']
+        print(rs)
+        print(dir(rs))
+        return rs[0]['count(%s)' % field]
 
     @classmethod
     async def find(cls, pk):
@@ -84,21 +86,23 @@ class Model(dict, metaclass=ModelMetaClass):
         return cls(**rs[0])
 
     async def save(self):
-        args = list(map(self.get_value_or_default, self.__field__))
+        args = list(map(self.get_value_or_default, self.__fields__))
         args.append(self.get_value_or_default(self.__primary_key__))
-        rows = await excute(self.__insert__.replace('?', '%s'), args)
+        rows = await execute(self.__insert__.replace('?', '%s'), args)
         return rows
 
     async def update(self):
-        args = list(map(self.get_value, self.__field__))
+        args = list(map(self.get_value, self.__fields__))
         args.append(self.get_value(self.__primary_key__))
-        rows = await excute(self.__update__.replace('?', '%s'), args)
+        rows = await execute(self.__update__.replace('?', '%s'), args)
         return rows
 
     async def remove(self):
         args = [self.get_value(self.__primary_key__)]
-        rows = await excute(self.__delete__.replace('?', '%s'), args)
+        rows = await execute(self.__delete__.replace('?', '%s'), args)
         return rows
+
+
 
 
 

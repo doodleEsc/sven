@@ -52,4 +52,4 @@ class ModelMetaClass(type):
                               % (table_name, ', '.join(map(lambda f: '`%s`=?' % f, fields)),\
                                  primary_key)
         attrs['__delete__'] = 'DELETE FROM `%s` WHERE `%s`=?' % (table_name, primary_key)
-        return super().__new__(mcs, bases, attrs)
+        return super().__new__(mcs, name, bases, attrs)

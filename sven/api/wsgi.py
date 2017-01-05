@@ -5,11 +5,13 @@ from json.decoder import JSONDecodeError
 from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
 
-from sven.api.response import Response, response_factory
+from sven.api.response import Response
 from sven.utils import importutil
 from sven.utils.log import Log
 
 logger = Log()
+
+RESPONSE_FACTORY = 'sven.api.response.response_factory'
 
 
 def has_request(func):
@@ -57,27 +59,34 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self, config, loop=None, middlewares=None):
-        self.template_engine = init_template_engine(config.template_path)
+    def __init__(self, loop=None, handlers=None, middlewares=None, template_engine=None):
+        #self.template_engine = init_template_engine(config.template_path)
+        self.template_engine = template_engine
 
         if not isinstance(middlewares, list) or middlewares is None:
-            middlewares = config.middlewares
-        middlewares.append(response_factory)
+            middlewares = []
+        middlewares.append(RESPONSE_FACTORY)
+        middlewares = tuple(map(importutil.import_function, middlewares))
 
         super().__init__(loop=loop, middlewares=middlewares)
 
-        self.add_handlers(config.handlers)
+        self.add_handlers(handlers)
 
     def copy(self):
         raise NotImplemented
 
     def render_template(self, template, body):
-        return self.template_engine.get_template(template).render(**body)
+        if isinstance(self.template_engine, Environment):
+            return self.template_engine.get_template(template).render(**body)
+        else:
+            raise NotImplemented
 
     def add_handlers(self, modules):
         if not isinstance(modules, list):
             # Here should raise an exception
             raise FileNotFoundError()
+        if len(modules) == 0:
+            raise ImportError("no handlers")
         for module_str in modules:
             module = importutil.import_module(module_str)
             # get wsgi handler function

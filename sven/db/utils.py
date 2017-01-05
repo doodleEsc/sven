@@ -14,7 +14,7 @@ async def create_pool(loop, **kwargs):
         port=kwargs.get('port', 3306),
         user=kwargs['user'],
         password=kwargs['password'],
-        db=kwargs['database'],
+        db=kwargs['db'],
         charset=kwargs.get('charset', 'utf8'),
         autocommit=kwargs.get('autocommit', True),
         maxsize=kwargs.get('maxsize', 10),
@@ -26,18 +26,18 @@ async def select(sql, args, size=None):
     global __pool
     async with __pool.get() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
-            await cur.excute(sql, args)
+            await cur.execute(sql, args)
         return await cur.fetchmany(size) if size else cur.fetchall()
 
 
-async def excute(sql, args, autocommit=True):
+async def execute(sql, args, autocommit=True):
     async with __pool.get() as conn:
         if not autocommit:
             await conn.begin()
 
         try:
             async with conn.cursor(aiomysql.DictCursor) as cur:
-                await cur.excute(sql, args)
+                await cur.execute(sql, args)
                 affected = cur.rowcount
         except BaseException as e:
             if not autocommit:
