@@ -43,7 +43,7 @@ class ModelMetaClass(type):
         attrs['__table__'] = table_name
         attrs['__primary_key__'] = primary_key
         attrs['__fields__'] = fields
-        attrs['__select__'] = 'SELECT `%s`,%s FROM `%s`'\
+        attrs['__select__'] = 'SELECT `%s`, %s FROM `%s`'\
                               % (primary_key, ', '.join(escaped_fields), table_name)
         attrs['__insert__'] = 'INSERT INTO `%s` (%s, `%s`) VALUES (%s)' \
                               % (table_name, ', '.join(escaped_fields), primary_key, \

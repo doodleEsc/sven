@@ -32,35 +32,39 @@ class Model(dict, metaclass=ModelMetaClass):
                 setattr(self, key, value)
         return value
 
+
     @classmethod
     async def find_all(cls, where=None, args=None, **kwargs):
         sql = [cls.__select__]
         if where:
-            sql.append('where')
+            sql.append('WHERE')
             sql.append(where)
+
         if args is None:
             args = []
+
         groupby = kwargs.get('groupby', None)
         if groupby:
-            sql.append('group by')
+            sql.append('GROUP BY')
             sql.append(groupby)
 
         orderby = kwargs.get('orderby', None)
         if orderby:
-            sql.append('order by')
+            sql.append('ORDER BY')
             sql.append(orderby)
 
         limit = kwargs.get('limit', None)
         if limit:
-            sql.append('limit')
+            sql.append('LIMIT')
             if isinstance(limit, int):
                 sql.append('?')
-                args.append(str(limit))
+                args.append(limit)
             elif isinstance(limit, tuple) and len(limit) == 2:
                 sql.append('?,?')
-                args.extend(map(lambda s: str(s), limit))
+                args.extend(map(lambda s: s, limit))
             else:
                 raise ValueError('Invalid limit value: %s' % str(limit))
+
         rs = await select(' '.join(sql).replace('?', '%s'), args)
         return [cls(**r) for r in rs]
 
@@ -68,13 +72,11 @@ class Model(dict, metaclass=ModelMetaClass):
     async def find_number(cls, field, where=None, args=None):
         sql = ['select count(%s) from %s' % (field, cls.__table__)]
         if where:
-            sql.append('where')
+            sql.append('WHERE')
             sql.append(where)
         rs = await select(' '.join(sql).replace('?', '%s'), args, 1)
         if len(rs) == 0:
             return None
-        print(rs)
-        print(dir(rs))
         return rs[0]['count(%s)' % field]
 
     @classmethod

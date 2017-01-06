@@ -23,14 +23,19 @@ async def create_pool(loop, **kwargs):
 
 
 async def select(sql, args, size=None):
+    print(sql)
+    print(args)
     global __pool
-    async with __pool.get() as conn:
+    async with __pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
-            await cur.execute(sql, args)
-        return await cur.fetchmany(size) if size else cur.fetchall()
+            await cur.execute(sql, args or ())
+            rs = await cur.fetchmany(size) if size else cur.fetchall()
+            return rs.result()
+
 
 
 async def execute(sql, args, autocommit=True):
+    print(sql)
     async with __pool.get() as conn:
         if not autocommit:
             await conn.begin()
