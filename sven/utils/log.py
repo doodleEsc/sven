@@ -61,7 +61,7 @@ class Log(object):
         self.logger.info(msg)
 
     def warn(self, msg):
-        self.logger.warn(msg)
+        self.logger.warning(msg)
 
     def debug(self, msg):
         self.logger.debug(msg)
