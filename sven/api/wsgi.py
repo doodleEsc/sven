@@ -40,6 +40,7 @@ def init_template_engine(templates_path, filters=None,
     return env
 
 
+
 class Server(object):
     """Server class that handle service
     manage service

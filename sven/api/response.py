@@ -68,7 +68,7 @@ class Response(web.Response):
                  body=None, text=None, reason=None):
         super().__init__(status=status, headers=headers,
                          content_type=content_type, charset=charset,
-                         body=body, text=text, reason=None)
+                         body=body, text=text, reason=reason)
 
 
 async def response_factory(app, handler):
@@ -77,7 +77,7 @@ async def response_factory(app, handler):
         if isinstance(r, dict):
             template = r.get('template', None)
             if template is None:
-                resp = Response(body=json.dumps(r,ensure_ascii=False).encode('utf-8'))
+                resp = Response(body=json.dumps(r, ensure_ascii=False).encode('utf-8'))
                 resp.content_type = 'application/json;charset=utf-8'
                 return resp
             else:
