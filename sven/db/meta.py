@@ -2,7 +2,7 @@
 metaclass for model
 """
 
-from sven.db.field import  Field
+from sven.db.field import Field
 
 
 class ModelMetaClass(type):

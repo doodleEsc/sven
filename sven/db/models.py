@@ -1,7 +1,7 @@
-import time, uuid
+import time
 
 from sven.db.model import Model
-from sven.db.field import StringField,BooleanField, FloatField, TextField
+from sven.db.field import StringField,BooleanField, FloatField
 from sven.utils import util
 
 
@@ -21,8 +21,6 @@ if __name__ == '__main__':
     from sven.db.utils import create_pool
 
     loop = asyncio.get_event_loop()
-    # create_pool(loop, host='10.133.145.159',
-    #             user='test', password='test', db='sven')
 
     async def test():
         await create_pool(loop, host='10.133.145.254',
@@ -30,7 +28,8 @@ if __name__ == '__main__':
 
         # user = User(id='2', name='flz', email='flz@foxmail.com',passwd='123456',image='no image')
         # await user.save()
-        r = await User.find_all(where='id=?', args=['1'])
+        r = await User.find_all(where='id=?', args=['2'])
         print(r)
+
 
     loop.run_until_complete(test())

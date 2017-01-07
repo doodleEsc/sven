@@ -6,12 +6,12 @@ import aiomysql
 __pool = None
 
 
-async def create_pool(loop, **kwargs):
+async def create_pool(loop, host='localhost', port=3306, **kwargs):
     global __pool
     __pool = await aiomysql.create_pool(
         loop=loop,
-        host=kwargs.get('host', 'localhost'),
-        port=kwargs.get('port', 3306),
+        host=host,
+        port=port,
         user=kwargs['user'],
         password=kwargs['password'],
         db=kwargs['db'],
@@ -23,15 +23,12 @@ async def create_pool(loop, **kwargs):
 
 
 async def select(sql, args, size=None):
-    print(sql)
-    print(args)
     global __pool
     async with __pool.acquire() as conn:
         async with conn.cursor(aiomysql.DictCursor) as cur:
             await cur.execute(sql, args or ())
             rs = await cur.fetchmany(size) if size else cur.fetchall()
             return rs.result()
-
 
 
 async def execute(sql, args, autocommit=True):
