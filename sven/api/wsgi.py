@@ -98,8 +98,7 @@ class Application(web.Application):
     wsgi application class.
     """
 
-    def __init__(self, loop=None, handlers=None, middlewares=None, template_engine=None):
-        #self.template_engine = init_template_engine(config.template_path)
+    def __init__(self, loop=None, handlers=None, static_path=None, middlewares=None, template_engine=None):
         self.template_engine = template_engine
 
         if not isinstance(middlewares, list) or middlewares is None:
@@ -110,6 +109,7 @@ class Application(web.Application):
         super().__init__(loop=loop, middlewares=middlewares)
 
         self.add_handlers(handlers)
+        self.add_static(static_path)
 
     def copy(self):
         raise NotImplemented
@@ -138,6 +138,16 @@ class Application(web.Application):
                     route = getattr(func, '__route__', None)
                     if method and route:
                         self.router.add_route(method, route, RequestHandler(func))
+
+    def add_static(self, directory, prefix='/static/', ):
+        """
+
+        :param prefix: prefix that used for static files
+                        for example: http://localhost:8000/{prefix}/test.css
+        :param directory: the full path of the folder which contains the static files.
+        :return:None
+        """
+        self.router.add_static(prefix, directory)
 
 
 class RequestHandler(object):

@@ -101,6 +101,7 @@ if __name__ == '__main__':
 
     app = Application(loop=loop,
                       handlers=handlers,
+                      static_path='E:/Python_Project/sven/sven/static',
                       middlewares=middlewares,
                       template_engine=template_engine)
     server = Server(app)
