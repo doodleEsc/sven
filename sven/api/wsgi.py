@@ -1,6 +1,7 @@
-import inspect
+import inspect, sys
 from urllib import parse
 from json.decoder import JSONDecodeError
+from yarl import URL
 
 from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
@@ -40,7 +41,6 @@ def init_template_engine(templates_path, filters=None,
     return env
 
 
-
 class Server(object):
     """Server class that handle service
     manage service
@@ -49,9 +49,47 @@ class Server(object):
     def __init__(self, app):
         self._app = app
 
-    def run(self, host, port):
-        logger.info('server start at %s:%s' % (host, port))
-        web.run_app(self._app, host=host, port=port)
+    def run(self, host='localhost', port=None,
+            shutdown_timeout=60.0, ssl_context=None,
+            print=print, backlog=128, access_log_format=None,
+            access_log=None):
+        """Run an app locally"""
+        if port is None:
+            if not ssl_context:
+                port = 8080
+            else:
+                port = 8443
+
+        loop = self._app.loop
+        make_handler_kwargs = dict()
+        if access_log_format is not None:
+            make_handler_kwargs['access_log_format'] = access_log_format
+        handler = self._app.make_handler(access_log=access_log,
+                                   **make_handler_kwargs)
+
+        loop.run_until_complete(self._app.startup())
+        srv = loop.run_until_complete(loop.create_server(handler, host,
+                                                         port, ssl=ssl_context,
+                                                         backlog=backlog))
+
+        scheme = 'https' if ssl_context else 'http'
+        url = URL('{}://localhost'.format(scheme))
+        url = url.with_host(host).with_port(port)
+        print("======== Running on {} ========\n"
+              "(Press CTRL+C to quit)".format(url))
+
+        try:
+            loop.run_forever()
+        except KeyboardInterrupt:  # pragma: no cover
+            pass
+        finally:
+            print("run here")
+            srv.close()
+            loop.run_until_complete(srv.wait_closed())
+            loop.run_until_complete(self._app.shutdown())
+            loop.run_until_complete(handler.shutdown(shutdown_timeout))
+            loop.run_until_complete(self._app.cleanup())
+        loop.close()
 
 
 class Application(web.Application):
