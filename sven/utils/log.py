@@ -9,29 +9,32 @@ import logging.handlers
 from sven.utils.singletone import singleton
 from sven.api.exception.path import PathNotFoundError
 
-NORMAL_FILE = 'E:/log/access.log'
-ERROR_FILE = 'E:/log/error.log'
-LOG_PATH = 'E:/log'
-
-
 @singleton
 class Log(object):
 
-    def __init__(self):
-        self._init_env()
+    def __init__(self, log_path='E:/log'):
+        self._init_env(log_path)
 
-    def _init_env(self):
+    def _init_env(self, log_path):
         try:
-            path_exist = os.path.exists(LOG_PATH)
+            path_exist = os.path.exists(log_path)
             if not path_exist:
-                os.mkdir(LOG_PATH)
-        except OSError:
-            raise PathNotFoundError("Paht %s Not Found" %LOG_PATH)
+                os.mkdir(log_path)
 
-        error_handler = logging.handlers.RotatingFileHandler(ERROR_FILE, maxBytes=1024*1024, backupCount=3)
+        except OSError:
+            raise PathNotFoundError("Paht %s Not Found" %log_path)
+
+        if log_path.endswith('/'):
+            error_log = log_path + 'error.log'
+            normal_log = log_path + 'access.log'
+        else:
+            error_log = log_path + '/error.log'
+            normal_log = log_path + '/access.log'
+
+        error_handler = logging.handlers.RotatingFileHandler(error_log, maxBytes=1024*1024, backupCount=3)
         error_handler.setLevel(logging.ERROR)
 
-        normal_handler = logging.handlers.RotatingFileHandler(NORMAL_FILE, maxBytes=1024*1024, backupCount=3)
+        normal_handler = logging.handlers.RotatingFileHandler(normal_log, maxBytes=1024*1024, backupCount=3)
         normal_handler.setLevel(logging.DEBUG)
 
         fmt_str = '%(asctime)s %(filename)s:%(lineno)s %(levelname)-8s [-] %(message)s'

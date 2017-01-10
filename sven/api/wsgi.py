@@ -16,6 +16,7 @@ RESPONSE_FACTORY = 'sven.api.response.response_factory'
 
 
 def has_request(func):
+
     parameters = inspect.signature(func).parameters
     return True if "request" in parameters.keys() else False
 
@@ -147,7 +148,8 @@ class Application(web.Application):
         :param directory: the full path of the folder which contains the static files.
         :return:None
         """
-        self.router.add_static(prefix, directory)
+        if isinstance(directory, str):
+            self.router.add_static(prefix, directory)
 
 
 class RequestHandler(object):
