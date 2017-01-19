@@ -1,7 +1,7 @@
 """
 API exception
 """
-from sven.api.exception import APIBaseError
+from sven.exception.base import APIBaseError
 
 
 class APIValueError(APIBaseError):

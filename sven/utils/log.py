@@ -7,7 +7,7 @@ import logging
 import logging.handlers
 
 from sven.utils.singletone import singleton
-from sven.api.exception.path import PathNotFoundError
+#from sven.api.exception.path import PathNotFoundError
 
 @singleton
 class Log(object):
@@ -22,7 +22,7 @@ class Log(object):
                 os.mkdir(log_path)
 
         except OSError:
-            raise PathNotFoundError("Paht %s Not Found" %log_path)
+            raise FileExistsError("log file not found")
 
         if log_path.endswith('/'):
             error_log = log_path + 'error.log'

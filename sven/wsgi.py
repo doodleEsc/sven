@@ -1,18 +1,18 @@
-import inspect, sys
-from urllib import parse
+import inspect
 from json.decoder import JSONDecodeError
-from yarl import URL
+from urllib import parse
 
 from aiohttp import web
 from jinja2 import Environment, FileSystemLoader
+from yarl import URL
 
-from sven.api.response import Response
+from sven.response import Response
 from sven.utils import importutil
 from sven.utils.log import Log
 
 logger = Log()
 
-RESPONSE_FACTORY = 'sven.api.response.response_factory'
+RESPONSE_FACTORY = 'sven.response.response_factory'
 
 
 def has_request(func):

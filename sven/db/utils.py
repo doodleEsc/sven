@@ -28,7 +28,7 @@ async def select(sql, args, size=None):
         async with conn.cursor(aiomysql.DictCursor) as cur:
             await cur.execute(sql, args or ())
             rs = await cur.fetchmany(size) if size else cur.fetchall()
-            return rs.result()
+            return rs
 
 
 async def execute(sql, args, autocommit=True):
@@ -36,7 +36,6 @@ async def execute(sql, args, autocommit=True):
     async with __pool.get() as conn:
         if not autocommit:
             await conn.begin()
-
         try:
             async with conn.cursor(aiomysql.DictCursor) as cur:
                 await cur.execute(sql, args)

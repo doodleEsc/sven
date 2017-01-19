@@ -71,6 +71,7 @@ class Response(web.Response):
                          body=body, text=text, reason=reason)
 
 
+#transport most kind of object to aiohttp.web.response object
 async def response_factory(app, handler):
     async def response(request):
         r = await handler(request)
